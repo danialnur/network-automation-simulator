@@ -1,57 +1,24 @@
 # Network Automation Simulator
 
-This project simulates a basic network automation pipeline using Python. It mimics connecting to Cisco IOS network devices via SSH, executing configuration and monitoring commands, parsing VLAN outputs, and logging network states—all **without requiring access to real hardware**.
+A small Python project exploring automated network device configuration with [Netmiko](https://github.com/ktbyers/netmiko), built without needing access to real switches or routers.
 
-Designed to demonstrate your understanding of automated network workflows and scripting logic, this project is ideal for **network engineering internship portfolios**.
+It's two pieces, not fully wired together yet:
 
----
+- **`main.py`** — a simulated demo runner. For each device in a hardcoded list, it logs a timestamped, fake SSH session (`show vlan brief` output) without opening a real connection.
+- **`netmiko_handler.py`** — a real Netmiko helper (`send_config`) that connects to an actual Cisco IOS device over SSH and pushes commands from a file. Not currently called from `main.py`.
+- **`device_inventory.csv`** / **`config_commands.txt`** — sample inventory and config-push formats the two pieces above are built around.
 
-## 🚀 Features
-
-- Simulated SSH-based device connection with error handling
-- Simulated command execution (`show vlan brief`, etc.)
-- VLAN output parsing with structured data extraction
-- Centralized logging with timestamped session tracking
-- Designed to be run on any local machine (no hardware required)
-
----
-
-## 🧰 Tech Stack
-
-- **Python 3.10+**
-- `datetime`, `os` – Standard libraries
-- Designed for CLI environments (Windows, macOS, Linux)
-
----
-
-## 📁 Project Structure
+## Setup
 
 ```bash
-network-automation-simulator/
-├── main.py              # Main simulation script
-├── vlan_parser.py       # Parses VLAN output (simulated)
-├── device_simulator.py  # Contains device info and mock SSH logic
-├── utils.py             # Helper functions and logging
-├── sample_vlans/        # Directory with sample "show vlan brief" outputs
-└── logs/                # Auto-created folder with timestamped logs
-```
-
-## 🔧 Setup Instructions
-
-```bash
-# 1. Clone the Repository
-git clone https://github.com/yourusername/network-automation-simulator.git
+git clone https://github.com/danialnur/network-automation-simulator.git
 cd network-automation-simulator
-
-# 2. (Optional) Create a Virtual Environment
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# macOS / Linux
-python3 -m venv venv
-source venv/bin/activate
-
-# 3. Run the Simulation (no external dependencies required)
+pip install -r requirements.txt
 python main.py
 ```
+
+`main.py` runs standalone with no network access required — it only prints the simulated session. To push config to a real device with `netmiko_handler.py`, call `send_config()` with a device dict (matching the columns in `device_inventory.csv`) and a path to a command file (see `config_commands.txt`).
+
+## Next step
+
+Wire `main.py`'s `simulate = False` branch to call `netmiko_handler.send_config()` for each device in `device_inventory.csv`, so the demo path and the real path run the same code.
